@@ -1,0 +1,77 @@
+{
+  "group_id": "uio-it",
+
+  "buckets": [
+    {
+      "name": "iti-ops-apps",
+      "versioning": "Enabled",
+
+      "policy": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Sid": "AllowReadFromBackupAgent",
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "arn:aws:iam::uio-iti-ops:user/backup-agent"
+            },
+            "Action": ["s3:GetObject", "s3:ListBucket"],
+            "Resource": [
+              "arn:aws:s3:::iti-ops-apps",
+              "arn:aws:s3:::iti-ops-apps/*"
+            ]
+          }
+        ]
+      },
+
+      "lifecycle_rules": [
+        {
+          "id": "expire-logs",
+          "status": "Enabled",
+          "filter": { "prefix": "logs/" },
+          "expiration": { "days": 90 },
+          "abort_incomplete_multipart_upload": { "days_after_initiation": 7 }
+        },
+        {
+          "id": "prune-old-versions",
+          "status": "Enabled",
+          "filter": {},
+          "noncurrent_version_expiration": { "noncurrent_days": 30 }
+        }
+      ]
+    },
+    {
+      "name": "iti-ops-scratch",
+      "lifecycle_rules": [
+        {
+          "id": "expire-everything",
+          "status": "Enabled",
+          "filter": {},
+          "expiration": { "days": 14 }
+        }
+      ]
+    }
+  ],
+
+  "iam_users": [
+    {
+      "name": "backup-agent",
+      "create_access_key": true,
+      "policies": {
+        "read-apps": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": ["s3:GetObject", "s3:ListBucket"],
+              "Resource": [
+                "arn:aws:s3:::iti-ops-apps",
+                "arn:aws:s3:::iti-ops-apps/*"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

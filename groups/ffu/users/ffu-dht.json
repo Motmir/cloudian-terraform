@@ -1,0 +1,21 @@
+{
+  "group_id": "uio-it",
+
+  "buckets": [
+    {
+      "name": "ffu-dht-data",
+      "versioning": "Enabled",
+      "lifecycle_rules": [
+        {
+          "id": "prune-old-versions",
+          "status": "Enabled",
+          "filter": {},
+          "noncurrent_version_expiration": {
+            "noncurrent_days": 60,
+            "newer_noncurrent_versions": 5
+          }
+        }
+      ]
+    }
+  ]
+}
